@@ -1,0 +1,17 @@
+name,domain,industry,sub_industry,employee_count,revenue_musd,country,region,tech_signals,description
+Freshworks,freshworks.com,Software,SaaS CRM,5200,596,India,Tamil Nadu,uses Salesforce;hiring SDRs;uses AWS,Customer engagement and ITSM software company
+Chargebee,chargebee.com,Software,SaaS Billing,1100,150,India,Tamil Nadu,uses AWS;hiring SDRs,Subscription billing and revenue management platform
+Zoho,zoho.com,Software,SaaS CRM,15000,1000,India,Tamil Nadu,uses own stack,Full-suite business software vendor
+Postman,postman.com,Software,API Tools,850,180,USA,California,uses AWS;uses Salesforce,API development and testing platform
+Razorpay,razorpay.com,Fintech,Payments,4200,850,India,Karnataka,uses AWS;hiring engineers,Payments and banking platform for businesses
+PhonePe,phonepe.com,Fintech,Payments,5800,1200,India,Karnataka,uses own stack,Digital payments and financial services
+Groww,groww.in,Fintech,Investing,1500,300,India,Karnataka,hiring engineers,Investment and stockbroking platform
+Meesho,meesho.com,E-commerce,Marketplace,3500,900,India,Karnataka,uses AWS;hiring engineers,Social commerce marketplace
+Udaan,udaan.com,E-commerce,B2B Marketplace,2800,700,India,Karnataka,uses Salesforce,B2B trade platform for small businesses
+Licious,licious.in,E-commerce,D2C Food,2200,250,India,Karnataka,uses AWS,Fresh meat and seafood delivery
+Cerner Health,cerner.com,Healthcare,Health IT,25000,5800,USA,Missouri,uses Salesforce;uses Epic,Health information technology (now Oracle Health)
+Practo,practo.com,Healthcare,Health Tech,1200,60,India,Karnataka,uses AWS,Doctor discovery and clinic management software
+Tata Steel,tatasteel.com,Manufacturing,Steel,35000,27000,India,Jharkhand,uses SAP,Integrated steel manufacturer
+Ather Energy,atherenergy.com,Manufacturing,EV,1800,220,India,Karnataka,hiring engineers,Electric scooter manufacturer
+Delhivery,delhivery.com,Logistics,Supply Chain,40000,1000,India,Haryana,uses AWS;hiring engineers,Logistics and supply chain services
+Unacademy,unacademy.com,Education,EdTech,2000,180,India,Karnataka,uses AWS,Online learning platform
