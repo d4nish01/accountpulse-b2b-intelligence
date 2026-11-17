@@ -39,6 +39,28 @@ def health():
     return {"status": "ok"}
 
 
+@app.on_event("startup")
+def seed_sample_data_if_empty():
+    """If the database has no companies, load the bundled sample CSV.
+
+    Keeps demo deploys self-healing: a fresh container (redeploy resets the
+    SQLite file) comes up with data already in it.
+    """
+    import csv
+
+    from .database import SessionLocal
+    from .models import Company
+    from .routers.companies import SAMPLE_CSV, _import_rows
+
+    db = SessionLocal()
+    try:
+        if db.query(Company).count() == 0 and os.path.exists(SAMPLE_CSV):
+            with open(SAMPLE_CSV, newline="", encoding="utf-8") as f:
+                _import_rows(csv.DictReader(f), source="sample-data", db=db)
+    finally:
+        db.close()
+
+
 # In the single-image deploy, serve the built frontend and let the React
 # router handle every non-API path. Registered API routes above win because
 # they were added first.

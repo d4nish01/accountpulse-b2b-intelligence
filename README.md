@@ -1,5 +1,8 @@
 # AccountPulse - B2B Account Intelligence
 
+**Live demo: https://accountpulse-b2b-intelligence.onrender.com**
+(free tier: sleeps after 15 min idle - first open takes 30-60s to wake)
+
 AccountPulse helps a B2B sales team answer one question: **which accounts should
 we talk to first, and why?** You import target companies, describe your Ideal
 Customer Profile (ICP), and AccountPulse scores every account against it with a
@@ -51,7 +54,14 @@ Then in the UI: click **Load sample companies**, go to **ICP Builder**, create a
 ICP (e.g. industries `Software, Fintech`, 500-10000 employees, country `India`,
 signals `uses AWS, hiring SDRs`), back on **Rankings** press **Run scoring**.
 
-## With Docker
+## Deploy your own (Render free tier)
+
+The root `Dockerfile` builds the frontend and serves it from FastAPI, so one
+service is the whole app: New Web Service -> this repo -> Docker -> add env var
+`GEMINI_API_KEY` -> Deploy. The app seeds the sample companies automatically on
+first boot.
+
+## Local Docker
 
 ```bash
 cp .env.example .env       # add GEMINI_API_KEY if you have one
@@ -106,6 +116,7 @@ signals with `;`).
 - [x] ICP builder
 - [x] Explainable rule-based scoring + rankings
 - [x] AI research briefs (Gemini, with template fallback)
+- [x] Single-image deploy (Render) with auto-seeded sample data
 - [ ] Auth & multi-user workspaces
 - [ ] Real firmographic data providers (Clearbit-style enrichment)
 - [ ] ML-learned weights once enough outcome data exists
