@@ -17,8 +17,10 @@ from ..schemas import BriefOut
 
 router = APIRouter(prefix="/briefs", tags=["briefs"])
 
-GEMINI_MODEL = "gemini-2.0-flash"
-GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent"
+# Preferred model first, then a lite fallback: free-tier flash models often
+# return 503 under load, so we try in order before degrading to the template.
+GEMINI_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest"]
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 
 
 def build_prompt(company: Company) -> str:
@@ -59,22 +61,25 @@ def generate_brief(company_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Company not found")
 
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
+    content, model = None, "template"
     if api_key:
-        try:
-            resp = requests.post(
-                GEMINI_URL,
-                params={"key": api_key},
-                json={"contents": [{"parts": [{"text": build_prompt(company)}]}]},
-                timeout=30,
-            )
-            resp.raise_for_status()
-            content = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
-            model = GEMINI_MODEL
-        except (requests.RequestException, KeyError, IndexError):
-            # Never let an LLM outage break the product - fall back to template.
-            content, model = template_brief(company), "template"
-    else:
-        content, model = template_brief(company), "template"
+        for candidate in GEMINI_MODELS:
+            try:
+                resp = requests.post(
+                    GEMINI_URL.format(model=candidate),
+                    params={"key": api_key},
+                    json={"contents": [{"parts": [{"text": build_prompt(company)}]}]},
+                    timeout=30,
+                )
+                resp.raise_for_status()
+                content = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+                model = candidate
+                break
+            except (requests.RequestException, KeyError, IndexError):
+                continue  # try the next model, then the template
+    if content is None:
+        # Never let an LLM outage break the product - fall back to template.
+        content = template_brief(company)
 
     brief = Brief(company_id=company.id, content=content, model=model)
     db.add(brief)
