@@ -47,9 +47,10 @@ def seed_sample_data_if_empty():
     SQLite file) comes up with data already in it.
     """
     import csv
+    import json
 
     from .database import SessionLocal
-    from .models import Company
+    from .models import Company, ICP
     from .routers.companies import SAMPLE_CSV, _import_rows
 
     db = SessionLocal()
@@ -57,6 +58,17 @@ def seed_sample_data_if_empty():
         if db.query(Company).count() == 0 and os.path.exists(SAMPLE_CSV):
             with open(SAMPLE_CSV, newline="", encoding="utf-8") as f:
                 _import_rows(csv.DictReader(f), source="sample-data", db=db)
+        # A demo ICP so a fresh deploy is instantly usable in a demo.
+        if db.query(ICP).count() == 0:
+            db.add(ICP(
+                name="Mid-market Indian SaaS",
+                industries=json.dumps(["Software", "Fintech"]),
+                min_employees=500, max_employees=10000,
+                min_revenue_musd=50, max_revenue_musd=2000,
+                countries=json.dumps(["India"]),
+                required_signals=json.dumps(["uses AWS", "hiring SDRs"]),
+            ))
+            db.commit()
     finally:
         db.close()
 
