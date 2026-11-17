@@ -7,8 +7,11 @@ Run locally (no Docker needed):
 
 Then open http://localhost:8000/docs for the interactive API docs.
 """
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 
 from .database import Base, engine
 from .routers import companies, icp, scoring, briefs
@@ -34,3 +37,17 @@ app.include_router(briefs.router)
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+# In the single-image deploy, serve the built frontend and let the React
+# router handle every non-API path. Registered API routes above win because
+# they were added first.
+STATIC_DIR = os.getenv("STATIC_DIR", "")
+if STATIC_DIR and os.path.isdir(STATIC_DIR):
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    def frontend_app(full_path: str):
+        candidate = os.path.join(STATIC_DIR, full_path)
+        if full_path and os.path.isfile(candidate):
+            return FileResponse(candidate)
+        return FileResponse(os.path.join(STATIC_DIR, "index.html"))
